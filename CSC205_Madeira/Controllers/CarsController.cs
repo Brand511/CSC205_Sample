@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Web.Routing;
 using CSC205_Madeira.Models;
 
 
@@ -20,11 +18,22 @@ namespace CSC205_Madeira.Controllers
                 new Car() { id=0, make = "Honda", model = "Civic", color = "blue", year = 2014 },
             };
         }
-            
+
+        protected override void Initialize(RequestContext requestContext)
+        {
+            base.Initialize(requestContext);
+            if (Session["carList"] == null)
+            {
+                Session["carList"] = cars;
+            }             
+        }
+
         // GET: Cars
         public ActionResult Index()
         {
-            return View(cars);
+            var c = (List<Car>) Session["carList"];
+
+            return View(c);
         }
 
         // GET: Cars/Details/5
@@ -46,6 +55,15 @@ namespace CSC205_Madeira.Controllers
             try
             {
                 // TODO: Add insert logic here
+                Car newCar = new Car() { id = 3, make = collection["make"],
+                    model = collection["model"],
+                    color = collection["color"],
+                    year = int.Parse(collection["year"]) };
+
+                cars = (List<Car>)Session["carList"];
+                cars.Add(newCar);
+
+                Session["carList"] = cars;
 
                 return RedirectToAction("Index");
             }

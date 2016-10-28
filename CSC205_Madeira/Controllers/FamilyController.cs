@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using CSC205_Madeira.Models;
 
+
 namespace CSC205_Madeira.Controllers
 {
     public class FamilyController : Controller
@@ -20,14 +21,15 @@ namespace CSC205_Madeira.Controllers
                 new Family() { id=2, familyname = "Ellis", address1 = "1 Sycamore Hollow", city = "Pittsburgh", state = "PA", zip = "15212", homephone = "4122371212" },
                 new Family() { id=3, familyname = "Braddock", address1 = "23 Livingstone Dr", city = "Monroeville", state = "PA", zip = "15010", homephone = "4123277486" }
             };
-
+            
             
         }
 
         // GET: Family
         public ActionResult Index()
-        {            
-                return View(families);                     
+        {
+   
+            return View(families);                     
         }
 
         // GET: Family/Details/5
@@ -36,6 +38,34 @@ namespace CSC205_Madeira.Controllers
             var f = families[id];
 
             return View(f);
+        }
+
+        // GET: Family/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Family/Create
+        [HttpPost]
+        public ActionResult Create(FormCollection collection)
+        {
+
+            Family f = new Family() { id = 8, familyname = "Davidson", address1 = "123 Hastings Dr", city = "Cranberry Township", state = "PA", zip = "16066", homephone = "7247797964" };
+            families.Add(f);
+
+            //try
+            //{
+            //    // TODO: Add insert logic here
+
+            //    return RedirectToAction("Index");
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
+            return RedirectToAction("Index");
+
         }
     }
 }

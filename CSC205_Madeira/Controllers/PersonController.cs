@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Web.Routing;
 using CSC205_Madeira.Models;
 
 
@@ -35,17 +33,43 @@ namespace CSC205_Madeira.Controllers
 
         }
 
+        /**
+         * Session isn't available when the constructor is called.  Therefore, you need
+         * to store the list in the Initialize method.
+         * 
+         * This method checks to see of the peopleList is already in Session.  If not,
+         * it save the list to the session.  If it is already in session the method does nothing.
+         * 
+         * This StackOverflow entry talks about it:
+         * http://stackoverflow.com/questions/18234355/get-an-existing-session-in-my-basecontroller-constructor
+         * 
+         */
+        protected override void Initialize(RequestContext requestContext)
+        {
+            base.Initialize(requestContext);
+            if (Session["peopleList"] == null)
+            {
+                Session["peopleList"] = people;
+            }
+        }
+
         // GET: Person
         public ActionResult Index()
-        {            
-            return View(people);
+        {
+            var p = (List<Person>)Session["peopleList"];
+            return View(p);
         }
 
         // GET: Person/Details/5
         public ActionResult Details(int id)
         {
-            var p = people[id];
+            // Get the list of people from the session
+            var pList = (List<Person>)Session["peopleList"];
 
+            // Get the person with the passed in ID
+            var p = pList[id];
+
+            // Return the person data to the view
             return View(p);
         }
 
@@ -61,7 +85,24 @@ namespace CSC205_Madeira.Controllers
         {
             try
             {
-                // TODO: Add insert logic here
+                Person newPerson = new Person()
+                {
+                    id = 99,
+                    firstname = collection["firstname"],
+                    middlename = collection["middlename"],
+                    lastname = collection["lastname"],
+                    cell = collection["cell"],
+                    relationship = collection["relationship"],
+                    familyId = int.Parse(collection["familyId"]
+                    )
+                };
+
+                // Add the person to the list
+                people = (List<Person>)Session["peopleList"];
+                people.Add(newPerson);
+
+                // Save the list to the session
+                Session["peopleList"] = people;
 
                 return RedirectToAction("Index");
             }
